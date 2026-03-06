@@ -7,9 +7,19 @@ async function fetchOtp() {
     try {
         const response = await fetch(API_URL);
         const data = await response.json();
-        // Format the OTP to have a space in the middle for readability (e.g. 123 456)
+
+        // Format OTP like 123 456
         const otpStr = data.otp.toString().padStart(6, '0');
         otpDisplay.innerText = otpStr.slice(0, 3) + ' ' + otpStr.slice(3);
+
+        // Use backend timer instead of browser timer
+        const remainingSeconds = data.expires_in;
+
+        countdownElement.innerText = `Refreshing in ${remainingSeconds}s`;
+
+        const percentage = (remainingSeconds / 30) * 100;
+        progressBar.style.width = `${percentage}%`;
+
     } catch (error) {
         console.error('Error fetching OTP:', error);
         otpDisplay.innerText = 'ERROR';
